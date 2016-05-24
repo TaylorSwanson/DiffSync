@@ -15,8 +15,4 @@ Document.prototype.sync = function sync() {
 
 };
 
-Document.prototype.close = function close(callback) {
-    // TODO: Save and close the document
-};
-
 module.exports = Document;

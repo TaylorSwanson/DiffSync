@@ -20,11 +20,15 @@ Document.prototype.set = function set(newContent) {
     this.sync();
 };
 
+Document.prototype.close = function close(callback) {
+    // TODO: Save and close the document
+};
+
 // Generates a new client and returns it
 Document.prototype.getClient = function getClient() {
     var c = new Client();
     this.clients.push(c);
-    
+
     return c;
 };
 
