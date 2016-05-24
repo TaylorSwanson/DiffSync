@@ -10,7 +10,6 @@ var config 	= require("../api/modules/config.js");
 
 var maxCores = config.cluster.maxCores;
 
-
 if (cluster.isMaster && config.cluster.enabled) {
     console.log("SFNT OT Server");
     console.log("Copyright 2015-2016 Taylor Swanson" + "\n");
@@ -54,15 +53,4 @@ if (cluster.isMaster && config.cluster.enabled) {
 
     // Start server
     var app = require("./modules/app.js");
-
-    // Load server routes
-    var routes = require("./routes/");
-
-    Date.prototype.addDays = function (d) {
-        if (d) {
-            var t = this.getTime();
-            t = t + (d * 86400000);
-            this.setTime(t);
-        }
-    };
 }
