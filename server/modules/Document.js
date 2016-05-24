@@ -5,8 +5,8 @@
 
 var dmp = require("./DiffMatchPatch.js");
 
-function Document() {
-    this.content = "";
+function Document(originalContent) {
+    this.content = originalContent || "";
     this.clients = [];
 }
 
@@ -26,7 +26,7 @@ Document.prototype.close = function close(callback) {
 
 // Generates a new client and returns it
 Document.prototype.getClient = function getClient() {
-    var c = new Client();
+    var c = new Client(this);
     this.clients.push(c);
 
     return c;
