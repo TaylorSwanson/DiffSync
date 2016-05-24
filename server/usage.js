@@ -12,3 +12,17 @@ var d1c1 = ot.getClient(1);
 var d1c2 = ot.getClient(1);
 var d2c1 = ot.getClient(2);
 var d2c2 = ot.getClient(2);
+
+// Just thinking....
+ws.clientConnect(function(socket) {
+
+    var docClient;
+
+    socket.on("message", type, message) {
+        switch (type) {
+            case "diff":
+                if (!docClient) return;
+                docClient.edit(diff);
+        }
+    };
+})

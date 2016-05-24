@@ -14,8 +14,8 @@ LibOT.prototype.getClient = function getClient(id, callback) {
     if (documentManager.isOpen(id)) {
         return callback(null, documentManager.get(id).getClient());
     }
-    documentManager.create(this.dataProvider, id, function(err, document) {
-        callback(err, document ? document.getClient() : null);
+    documentManager.create(this.dataProvider, id, function(err, doc) {
+        callback(err, doc ? doc.getClient() : null);
     });
 };
 

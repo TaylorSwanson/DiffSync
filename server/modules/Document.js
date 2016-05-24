@@ -3,6 +3,8 @@
  * @module Document
  */
 
+var events = require("events");
+
 var dmp = require("./DiffMatchPatch.js");
 
 function Document(originalContent) {
@@ -30,6 +32,14 @@ Document.prototype.getClient = function getClient() {
     this.clients.push(c);
 
     return c;
+};
+
+// Remove the provided client object from the docuemnt
+Document.prototype.removeClient = function removeClient(client) {
+    var index = this.clients.indexOf(client);
+    if (index !== -1) this.clients.splice(index, 1);
+
+    // TODO: Check number of clients, remove if nobody's here
 };
 
 module.exports = Document;
