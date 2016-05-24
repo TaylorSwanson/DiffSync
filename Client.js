@@ -1,4 +1,0 @@
-/**
- * Client object
- * @module Client
- */
