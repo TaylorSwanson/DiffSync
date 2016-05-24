@@ -3,4 +3,8 @@
  * @module OT Interface
  */
 
-var Document = require("./Document.js");
+var Document = require("../modules/Document.js");
+
+module.exports = {
+    
+}
