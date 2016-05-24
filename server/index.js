@@ -19,4 +19,4 @@ function LibOT(dataProvider) {
     }
 };
 
-module.exports = OT;
+module.exports = LibOT;
