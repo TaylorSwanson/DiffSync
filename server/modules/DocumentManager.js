@@ -6,19 +6,44 @@ module.exports = (function() {
 
     var documentMap = {};
 
-    return {
-        // Returns a document from cache or creates a new one
-        get: function get(id) {
-            if (isOpen(id)) return documentMap[id];
+    // Returns true if the document is presently open
+    var isOpen = function isOpen(id) {
+        return (documentMap.hasOwnProperty(id));
+    };
 
-            var d = new Document();
+    // Returns a document from cache or creates a new one
+    var get = function get(id) {
+        if (isOpen(id)) return documentMap[id];
+
+        var d = new Document();
+        documentMap[id] = d;
+
+        return d;
+    };
+
+    // Creates a document from existing data and returns its instance
+    // If document already exists, it simply returns that instance
+    var create = function create(dataProvider, id, callback) {
+        if (isOpen(id)) return callback(null, get(id));
+
+        // Load data from provider
+        dataProvider.get(id, function(data) {
+            var d = new Document(data);
             documentMap[id] = d;
 
-            return d;
-        },
-        // Returns true if the document is presently open
-        isOpen: function isOpen(id) {
-            return (documentMap.hasOwnProperty(id));
-        }
-    }
+            callback(null, d);
+        });
+    };
+
+    var close = function close(id, callback) {
+        if (!isOpen(id)) return callback();
+
+        documentMap[id].close(callback);
+    };
+
+    return {
+        get: get,
+        create: create,
+        close: close
+    };
 });
