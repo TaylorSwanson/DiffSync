@@ -9,12 +9,18 @@ var dmp = require("./DiffMatchPatch.js");
 
 function Document(originalContent) {
     this.content = originalContent || "";
+    this.shadow = this.content;
     this.clients = [];
 }
 
 // Notifies clients of changes
 Document.prototype.sync = function sync() {
     // TODO: Throttle for each client
+    
+};
+
+Document.prototype.edit = function edit(diff) {
+
 };
 
 Document.prototype.set = function set(newContent) {

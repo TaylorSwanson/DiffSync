@@ -22,5 +22,5 @@ Client.prototype.disconnect = function disconnect() {
 
 // Applies the provided diff to the document
 Client.prototype.edit = function edit(diff) {
-
+    this.doc.edit(diff);
 };

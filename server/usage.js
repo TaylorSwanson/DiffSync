@@ -23,6 +23,21 @@ ws.clientConnect(function(socket) {
             case "diff":
                 if (!docClient) return;
                 docClient.edit(diff);
+                break;
+            case "close":
+                if (docClient) docClient.disconnect();
+                break;
+            case "auth":
+                if (docClient) return;
+                docClient = ot.getClient(message.id);
+
+                // docClient events
+                docClient.on("sync", function(diff) {
+                    socket.send("sync", diff);
+                });
+                break;
         }
     };
+
+    docClient.on("")
 })
