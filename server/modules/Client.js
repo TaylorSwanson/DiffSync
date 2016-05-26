@@ -5,9 +5,13 @@
 
 var events = require("events");
 
+var dmp = require("./DiffMatchPatch.js");
+
 function Client(doc) {
     if (!doc) return new Error("Document must be provided when creating a client");
     this.doc = doc;
+
+    this.patchQueue = [];
 
     events.EventEmitter.call(this);
 }
@@ -20,7 +24,14 @@ Client.prototype.disconnect = function disconnect() {
     this.doc = undefined;
 };
 
-// Applies the provided diff to the document
+// Applies server-side edits to be sent to the client
+Client.prototype.patch = function patch(patches) {
+    this.patchQueue.push(patches);
+};
+
+// Applies the client's edit to the doc
 Client.prototype.edit = function edit(diff) {
+    // Calculate patches from diff
+
     this.doc.edit(diff);
 };

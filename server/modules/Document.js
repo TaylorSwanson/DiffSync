@@ -11,16 +11,45 @@ function Document(originalContent) {
     this.content = originalContent || "";
     this.shadow = this.content;
     this.clients = [];
+
+    this.editQueue = [];
 }
 
-// Notifies clients of changes
-Document.prototype.sync = function sync() {
-    // TODO: Throttle for each client
-    
+// Enqueue patch to be processed at a later date
+Document.prototype.patch = function patch(patches) {
+    // TODO: Verify diff format?
+    this.editQueue.push(patches);
 };
 
-Document.prototype.edit = function edit(diff) {
+// Applies edit, creates diff, and sends to clients
+Document.prototype.sync = function sync() {
+    // Fast clone edit queue array in case applying edits takes a while
+    var eq = this.editQueue.slice(0);
+    this.editQueue = [];
+    // Iterate over edit queue, apply patches
+    for (var i = 0; i < eq.length; i++) {
+        // Apply edit
+        this.content = dmp.patch_apply(eq[i], this.content)[0];
+    }
 
+    // Edits complete, do diff against shadow
+    var shadowPatches = dmp.patch_make(this.shadow, this.content);
+    // Update the shadow to match content
+    this.updateShadow();
+
+    // Send changes to all clients
+    this.patchClients(shadowPatches);
+};
+
+// Sends new patches to all clients
+Document.prototype.patchClients = function patchClients(patches) {
+    for (var i = 0; i < this.clients.length; i++) {
+        this.clients[i].patch(patches);
+    }
+};
+
+Document.prototype.updateShadow = function updateShadow() {
+    this.shadow = this.content.
 };
 
 Document.prototype.set = function set(newContent) {
