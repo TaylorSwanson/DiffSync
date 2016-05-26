@@ -1,5 +1,8 @@
 function ClientSession() {
     EventEmitter.call(this);
+
+    this.content = "";
+    this.shadow = this.content;
 }
 
 ClientSession.prototype.__proto__ = EventEmitter.prototype;
