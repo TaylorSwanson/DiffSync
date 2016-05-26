@@ -16,12 +16,13 @@ function Document(originalContent) {
 }
 
 // Enqueue patch to be processed at a later date
-Document.prototype.patch = function patch(patches) {
+Document.prototype.patch = function patch(diffText) {
     // TODO: Verify diff format?
+    var patches = dmp.patch_fromText(diffText);
     this.editQueue.push(patches);
 };
 
-// Applies edit, creates diff, and sends to clients
+// Applies edits, creates diff, and sends to clients
 Document.prototype.sync = function sync() {
     // Fast clone edit queue array in case applying edits takes a while
     var eq = this.editQueue.slice(0);

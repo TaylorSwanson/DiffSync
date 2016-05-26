@@ -3,7 +3,7 @@ var LibOT = require("./index.js");
 function dataProvider() { }
 
 dataProvider.prototype.get = function get(id, callback) {
-    callback("Default new document content!");
+    callback("Default document with id: "+ id);
 };
 
 var ot = new LibOT(new dataProvider());
