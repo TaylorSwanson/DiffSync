@@ -49,7 +49,7 @@ Document.prototype.patchClients = function patchClients(patches) {
 };
 
 Document.prototype.updateShadow = function updateShadow() {
-    this.shadow = this.content.
+    this.shadow = this.content;
 };
 
 Document.prototype.set = function set(newContent) {

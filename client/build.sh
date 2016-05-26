@@ -1,9 +1,9 @@
 #!/bin/bash
-touch ./otClient.js
-echo "" > ./otClient.js
+touch ./OTClient.js
+echo "" > ./OTClient.js
 
-cat ./diff_match_patch.js       >> ./otClient.js
-cat ./EventEmitter.js           >> ./otClient.js
-cat ./ClientSession.js          >> ./otClient.js
+cat ./diff_match_patch.js       >> ./OTClient.js
+cat ./EventEmitter.js           >> ./OTClient.js
+cat ./ClientSession.js          >> ./OTClient.js
 
 echo "Done"
