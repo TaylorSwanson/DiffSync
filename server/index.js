@@ -3,7 +3,7 @@
  * @module OT Interface
  */
 
-var documentManager = require("../modules/DocumentManager.js");
+var documentManager = require("./modules/DocumentManager.js");
 
 function LibOT(dataProvider) {
     this.dataProvider = dataProvider;

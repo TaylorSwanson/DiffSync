@@ -1,5 +1,5 @@
 var WebSocketServer = require("ws").Server;
-var wss = new WebSocketServer({ port: 5666 });
+var wss = new WebSocketServer({ port: 5667 });
 
 var LibOT = require("./index.js");
 
@@ -12,7 +12,7 @@ dataProvider.prototype.get = function get(id, callback) {
 
 var ot = new LibOT(new dataProvider());
 
-ws.on("connection", function connection(ws) {
+wss.on("connection", function connection(ws) {
     console.log("New client; creating session");
 
     var client = ot.getClient("123");
@@ -29,7 +29,7 @@ ws.on("connection", function connection(ws) {
     ws.on("message", function handleMessage(message) {
         console.log("Received:", message);
 
-        switch(message.type):
+        switch(message.type) {
             // Client disconnecting
             case "close":
                 client.disconnect();
@@ -37,11 +37,12 @@ ws.on("connection", function connection(ws) {
                 ws.close();
                 break;
             // Client made changes
-            case: "patch":
+            case "patch":
                 client.patch(message.patches);
                 break;
             default:
                 console.error("Received unrecognized message:", message);
+        }
     });
 
     ws.on("close", function handleClose() {
@@ -49,3 +50,5 @@ ws.on("connection", function connection(ws) {
         return;
     });
 });
+
+console.log("Ready");
