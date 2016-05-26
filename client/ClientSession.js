@@ -1,11 +1,8 @@
-/**
- * Document object
- * @module Document
- */
-
-function Document(originalContent) {
-    this.content = originalContent || "";
+function ClientSession() {
+    EventEmitter.call(this);
 }
+
+ClientSession.prototype.__proto__ = EventEmitter.prototype;
 
 Document.prototype.set = function set(newContent) {
     this.content = newContent;

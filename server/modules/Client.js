@@ -39,6 +39,11 @@ Client.prototype.patch = function patch(patches) {
     this.patchQueue.push(patches);
 };
 
+// Clear patchQueue
+Client.prototype.recallPatches = function recallPatches() {
+    this.patchQueue = [];
+}
+
 // Sends patches to client
 Client.prototype.sendPatches = function sendPatches() {
     // Ignore empty
