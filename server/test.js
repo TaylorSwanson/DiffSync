@@ -17,15 +17,31 @@ ws.on("connection", function connection(ws) {
 
     var client = ot.getClient("123");
 
+    // Server updating client with patches
+    client.on("patch", function(patches) {
+        if (!ws) return;
+        ws.send({
+            type: "patch",
+            patches: patches
+        });
+    });
+
     ws.on("message", function handleMessage(message) {
         console.log("Received:", message);
 
         switch(message.type):
+            // Client disconnecting
             case "close":
                 client.disconnect();
                 client = undefined;
                 ws.close();
                 break;
+            // Client made changes
+            case: "patch":
+                client.patch(message.patches);
+                break;
+            default:
+                console.error("Received unrecognized message:", message);
     });
 
     ws.on("close", function handleClose() {
