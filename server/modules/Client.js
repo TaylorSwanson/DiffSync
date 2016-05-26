@@ -12,6 +12,7 @@ function Client(doc) {
     this.doc = doc;
 
     this.patchQueue = [];
+    this.patchFrequency = 1;
 
     events.EventEmitter.call(this);
 }
@@ -31,7 +32,7 @@ Client.prototype.patch = function patch(patches) {
 
 // Applies the client's edit to the doc
 Client.prototype.edit = function edit(diff) {
-    // Calculate patches from diff
-
-    this.doc.edit(diff);
+    // Calculate patches from diff text
+    var patches = dmp.patch_fromText(diff);
+    this.doc.patch(patches);
 };

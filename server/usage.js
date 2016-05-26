@@ -20,7 +20,7 @@ ws.clientConnect(function(socket) {
 
     socket.on("message", type, message) {
         switch (type) {
-            case "diff":
+            case "patch":
                 if (!docClient) return;
                 docClient.edit(diff);
                 break;
@@ -32,8 +32,8 @@ ws.clientConnect(function(socket) {
                 docClient = ot.getClient(message.id);
 
                 // docClient events
-                docClient.on("sync", function(diff) {
-                    socket.send("sync", diff);
+                docClient.on("patch", function(diff) {
+                    socket.send("patch", diff);
                 });
                 break;
         }
