@@ -6,6 +6,7 @@
 var events = require("events");
 
 var dmp = require("./DiffMatchPatch.js");
+var throttle = require("./throttle.js");
 
 function Client(doc) {
     if (!doc) return new Error("Document must be provided when creating a client");
@@ -52,7 +53,7 @@ Client.prototype.sendPatches = function sendPatches() {
 
     var diffText = dmp.patch_toText(this.patchQueue);
     if (!diffText) return;
-    
+
     this.emit("patch", diffText);
     this.patchQueue = [];
 };

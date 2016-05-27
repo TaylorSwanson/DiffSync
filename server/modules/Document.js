@@ -29,6 +29,8 @@ Document.prototype.patch = function patch(diffText, client) {
 
     // Enqueu patches for other clients
     this.editQueue.push(patches);
+
+    this.throttledSync();
 };
 
 Document.prototype.throttledSync = (function throttledSync() {
@@ -84,16 +86,9 @@ Document.prototype.updateShadows = function updateShadows() {
     }
 };
 
-// // Applies patches to every shadow
-// Document.prototype.patchShadow = function patchShadow(patches) {
-//     for (var i = 0; i < this.clients.length; i++) {
-//         this.clients[i].shadow = dmp.patch_apply(patches, this.clients[i].shadow)[0];
-//     }
-// };
-
 Document.prototype.set = function set(newContent) {
     this.content = newContent;
-    this.sync();
+    this.throttledSync();
 };
 
 Document.prototype.close = function close(callback) {
