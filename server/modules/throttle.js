@@ -12,14 +12,14 @@ var throttle = function(func, wait, options) {
   if (!options) options = {};
 
   var later = function() {
-    previous = options.leading === false ? 0 : _.now();
+    previous = options.leading === false ? 0 : new Date().getTime();
     timeout = null;
     result = func.apply(context, args);
     if (!timeout) context = args = null;
   };
 
   var throttled = function() {
-    var now = _.now();
+    var now = new Date().getTime();
     if (!previous && options.leading === false) previous = now;
     var remaining = wait - (now - previous);
     context = this;
