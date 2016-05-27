@@ -26,7 +26,7 @@ Document.prototype.patch = function patch(diffText, client) {
     var patches = dmp.patch_fromText(diffText);
 
     // Patch client shadow that generated the changes
-    client.shadow = dmp.patch_apply(patches, client.shadow)[0];
+    client.shadow.setContent(dmp.patch_apply(patches, client.shadow.content)[0]);
 
     // Enqueu patches for other clients
     this.editQueue.push(patches);
@@ -63,26 +63,26 @@ Document.prototype.sync = function sync() {
 Document.prototype.patchClients = function patchClients() {
     console.log("Patching ", this.clients.length, "clients");
 
-    var standardPatches = dmp.patch_make(this.syncedShadow, this.content);
+    var standardPatches = dmp.patch_make(this.syncedShadow.content, this.content);
 
     for (var i = 0; i < this.clients.length; i++) {
         var c = this.clients[i];
         // Use common patches if client shadow matches the synced shadow
-        if (c.shadow == this.syncedShadow) {
+        if (c.shadow.content == this.syncedShadow.content) {
 
             c.patchClient(standardPatches);
             return;
         }
         // Generate patch for this client only
-        var patches = dmp.patch_make(c.shadow, this.content);
+        var patches = dmp.patch_make(c.shadow.content, this.content);
         c.patchClient(patches);
     }
 };
 
 Document.prototype.updateShadows = function updateShadows() {
-    this.syncedShadow = this.content;
+    this.syncedShadow.setContent(this.content);
     for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].shadow = this.syncedShadow;
+        this.clients[i].shadow.setContent(this.syncedShadow.content);
     }
 };
 
@@ -109,7 +109,7 @@ Document.prototype.close = function close(callback) {
 // Generates a new client and returns it
 Document.prototype.getClient = function getClient() {
     var c = new Client(this);
-    c.shadow = this.content;
+    c.shadow.setContent(this.content);
 
     this.clients.push(c);
 

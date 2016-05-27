@@ -13,7 +13,7 @@ var md5 = require("./md5.js");
 function Client(doc) {
     if (!doc) return new Error("Document must be provided when creating a client");
     this.doc = doc;
-    this.shadow = "";
+    this.shadow = new Shadow(doc.getContent());
     this.backup = "";
 
     // List of patches that need to be sent to client
