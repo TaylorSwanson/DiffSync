@@ -1,11 +1,7 @@
 /**
- * A client that attaches to a document
- * @module Client
+ * Shadow object
+ * @module Shadow
  */
-
-var events = require("events");
-
-var dmp = require("./DiffMatchPatch.js");
 
 var md5 = require("./md5.js");
 
@@ -17,6 +13,10 @@ function Shadow(defaultContent) {
 Shadow.prototype.setContent = function setContent(newContent) {
     this.content = newContent || "";
     this.checksum = md5(newContent);
+}
+
+Shadow.prototype.clone = function clone() {
+    return new Shadow(this.content);
 }
 
 module.exports = Shadow;
