@@ -11,7 +11,7 @@ dataProvider.prototype.get = function get(id, callback) {
 };
 
 dataProvider.prototype.set = function set(id, content) {
-
+    console.log("Document", id, "saved:", content);
 };
 
 var ot = new DiffSync(new dataProvider());
