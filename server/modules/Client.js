@@ -9,6 +9,7 @@ var dmp = require("./DiffMatchPatch.js");
 var throttle = require("./throttle.js");
 
 var md5 = require("./md5.js");
+var Shadow = require("./Shadow.js");
 
 function Client(doc) {
     if (!doc) return new Error("Document must be provided when creating a client");

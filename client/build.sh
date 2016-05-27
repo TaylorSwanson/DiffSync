@@ -1,6 +1,6 @@
 #!/bin/bash
 
-browserify ClientSession.js --s DiffSync -o ./DiffSync.js
+browserify index.js --s DiffSync -o ./DiffSync.js
 
 uglifyjs ./DiffSync.js -o ./DiffSyncMin.js
 

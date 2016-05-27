@@ -19,7 +19,7 @@ function ClientSession(defaultContent) {
 ClientSession.prototype.__proto__ = EventEmitter.prototype;
 
 ClientSession.prototype.updateShadow = function updateShadow() {
-    this.shadow.updateContent(this.content);
+    this.shadow.setContent(this.content);
 };
 
 ClientSession.prototype.getContent = function getContent() {
@@ -43,7 +43,7 @@ ClientSession.prototype.patchClient = function patchClient(diffText) {
     // Apply patches
     // NOTE: Shadow and content may not be the same now
     this.content = dmp.patch_apply(patches, this.content)[0];
-    this.shadow.updateContent(dmp.patch_apply(patches, this.shadow.content)[0]);
+    this.shadow.setContent(dmp.patch_apply(patches, this.shadow.content)[0]);
 };
 
 // Throttled function that sends edits to server
