@@ -34,10 +34,10 @@ Document.prototype.patch = function patch(diffText, client) {
     this.throttledSync();
 };
 
-Document.prototype.throttledSync = (function throttledSync() {
-    if (this.throttled) return this.throttled;
+Document.prototype.throttledSync = function throttledSync() {
+    if (this.throttled) return this.throttled();
     throw new Error("Throttled sync function has already been disposed of");
-})();
+};
 
 // Applies edits, creates diff, and sends to clients
 Document.prototype.sync = function sync() {

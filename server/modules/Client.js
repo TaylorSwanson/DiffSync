@@ -52,10 +52,10 @@ Client.prototype.recallPatches = function recallPatches() {
     this.patchQueue = [];
 }
 
-Client.prototype.throttledSync = (function throttledSync() {
-    if (this.throttled) return this.throttled;
+Client.prototype.throttledSync = function throttledSync() {
+    if (this.throttled) return this.throttled();
     throw new Error("Throttled sync function has already been disposed of");
-})();
+};
 
 // Sends patches to client
 Client.prototype.sync = function sync() {
