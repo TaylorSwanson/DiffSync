@@ -8,6 +8,10 @@ module.exports = (function() {
 
     var documentMap = {};
 
+    // Time between saves while actively being edited
+    // 5m default
+    var saveFrequency = 300 * 1000;
+
     // Returns true if the document is presently open
     var isOpen = function isOpen(id) {
         return (documentMap[id] != undefined);
@@ -33,6 +37,15 @@ module.exports = (function() {
             var d = new Document(data);
             documentMap[id] = d;
 
+            // Apply event handlers
+            d.setSaveHandler(function saveHandler(data) {
+                dataProvider.save(id, data)
+            }, saveFrequency);
+
+            d.setCloseHandler(function() {
+                delete documentMap[id];
+            });
+
             callback(null, d);
         });
     };
@@ -41,6 +54,7 @@ module.exports = (function() {
         if (!isOpen(id)) return callback();
 
         documentMap[id].close(callback);
+        // documentMap delete is handled in setCloseHandler
     };
 
     return {

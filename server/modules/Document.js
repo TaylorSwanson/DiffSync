@@ -16,6 +16,10 @@ function Document(originalContent) {
     this.clients = [];
     this.editQueue = [];
 
+    this.closeFunction = null;
+    this.saveFunction = null;
+    this.saveInterval = null;
+
     this.throttleFrequency = 100;
     this.throttled = throttle(this.sync.bind(this), this.throttleFrequency);
 }
@@ -91,19 +95,42 @@ Document.prototype.set = function set(newContent) {
     this.throttledSync();
 };
 
-Document.prototype.close = function close(callback) {
-    // TODO: Save and close the document
-    // Clean up
-    if (this.throttled && this.throttled.cancel) this.throttle.cancel();
-    this.throttled = null;
+Document.prototype.save = function save() {
+    if (!this.saveFunction) throw new Error("Cannot save document without providing a save handler first");
+    this.sync();
+    this.saveFunction(this.content);
+};
 
+Document.prototype.setSaveHandler = function setSaveHandler(saveFunction, frequency) {
+    if (this.saveInterval && typeof == "intervalObject") clearInterval(this.saveInterval);
+    this.saveFunction = saveFunction;
+
+    // Start saving every freq. ms
+    this.saveInterval = setInterval(this.save().bind(this), frequency);
+};
+
+Document.prototype.setCloseHandler = function setCloseHandler(closeFunction) {
+    this.closeFunction = closeFunction;
+};
+
+Document.prototype.close = function close(callback) {
+    // Save the document
+    this.save();
+    // Clean up
     this.content = null;
     this.syncedShadow = null;
 
     this.clients = null;
     this.editQueue = null;
 
+    this.closeFunction = null;
+
+    this.saveFunction = 0;
+    this.saveInterval = null;
+
+    if (this.throttled && this.throttled.cancel) this.throttle.cancel();
     this.throttleFrequency = null;
+    this.throttled = null;
 };
 
 // Generates a new client and returns it

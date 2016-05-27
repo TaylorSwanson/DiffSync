@@ -21,6 +21,7 @@ function Client(doc) {
     this.patchQueue = [];
 
     // Time to wait before sending patch messages to client
+    // 0.5s default
     this.throttleFrequency = 500;
     // Start throttled sync interval
     this.throttled = throttle(this.sync.bind(this), this.throttleFrequency);
