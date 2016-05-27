@@ -3,8 +3,6 @@
  * @module Document
  */
 
-var events = require("events");
-
 var dmp = require("./DiffMatchPatch.js");
 var throttle = require("./throttle.js");
 
@@ -19,7 +17,6 @@ function Document(originalContent) {
 
     this.throttleFrequency = 100;
     this.throttled = 0;
-    // this.syncInterval = setInterval(this.sync.bind(this), this.syncFrequency);
 }
 
 // Enqueue patch to be processed at a later date
@@ -103,6 +100,15 @@ Document.prototype.close = function close(callback) {
     // TODO: Save and close the document
     // Clean up
     if (this.throttled && this.throttled.cancel) this.throttle.cancel();
+    this.throttled = null;
+
+    this.content = null;
+    this.syncedShadow = null;
+
+    this.clients = null;
+    this.editQueue = null;
+
+    this.throttleFrequency = null;
 };
 
 // Generates a new client and returns it
