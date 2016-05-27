@@ -4,10 +4,10 @@ var serverFactory = require("spa-server");
 
 var server = serverFactory.create({
     path: "./",
-    port: 80,
+    port: 8070,
     fallback: {
         "text/javascript": "./OTClient.js",
-        "*": "index.html"
+        "*": "./test.html"
     },
     middleware: [
         function (request, response, next) {

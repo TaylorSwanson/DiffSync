@@ -7,6 +7,8 @@ var events = require("events");
 
 var dmp = require("./DiffMatchPatch.js");
 
+var Client = require("./Client.js");
+
 function Document(originalContent) {
     this.content = originalContent || "";
     this.shadow = this.content;

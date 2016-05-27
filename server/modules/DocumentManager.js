@@ -2,6 +2,8 @@
  * Document Manager; stores server Documents
  */
 
+var Document = require("./Document.js");
+
 module.exports = (function() {
 
     var documentMap = {};
@@ -43,7 +45,8 @@ module.exports = (function() {
 
     return {
         get: get,
+        isOpen: isOpen,
         create: create,
         close: close
     };
-});
+})();
