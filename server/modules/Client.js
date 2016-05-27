@@ -36,7 +36,6 @@ Client.prototype.disconnect = function disconnect() {
     this.doc = null;
     this.patchQueue = null;
     this.shadow = null;
-    this.backup = null;
 
     if (this.throttled && this.throttled.cancel) this.throttled.cancel();
     this.throttled = null;

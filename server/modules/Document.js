@@ -7,10 +7,11 @@ var dmp = require("./DiffMatchPatch.js");
 var throttle = require("./throttle.js");
 
 var Client = require("./Client.js");
+var Shadow = require("./Shadow.js");
 
 function Document(originalContent) {
     this.content = originalContent || "";
-    this.syncedShadow = this.content;
+    this.syncedShadow = new Shadow(this.content);
 
     this.clients = [];
     this.editQueue = [];
