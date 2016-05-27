@@ -8,10 +8,13 @@ var events = require("events");
 var dmp = require("./DiffMatchPatch.js");
 var throttle = require("./throttle.js");
 
+var md5 = require("./md5.js");
+
 function Client(doc) {
     if (!doc) return new Error("Document must be provided when creating a client");
     this.doc = doc;
     this.shadow = "";
+    this.backup = "";
 
     // List of patches that need to be sent to client
     this.patchQueue = [];
@@ -33,6 +36,7 @@ Client.prototype.disconnect = function disconnect() {
     this.doc = null;
     this.patchQueue = null;
     this.shadow = null;
+    this.backup = null;
 
     if (this.throttled && this.throttled.cancel) this.throttled.cancel();
     this.throttled = null;
