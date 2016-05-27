@@ -21,15 +21,23 @@
                                 client = new ClientSession(message.content);
 
                                 client.on("patch", function(patches) {
+                                    ws.send(JSON.stringify({
+                                        type: "patch",
+                                        patches: patches
+                                    }));
+                                });
 
-                                })
                                 break;
                             }
+
                             client.setContent(message.content);
                             break;
                         case "patch":
                             if (!client) break;
-                            client.patch(message.diff)
+                            client.patchClient(message.patches)
+                            break;
+                        default:
+                            console.error("Unrecognized message");
                             break;
                     }
                 };
