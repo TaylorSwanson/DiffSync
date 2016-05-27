@@ -6,36 +6,42 @@
 var events = require("events");
 
 var dmp = require("./DiffMatchPatch.js");
+var throttle = require("./throttle.js");
 
 var Client = require("./Client.js");
 
 function Document(originalContent) {
     this.content = originalContent || "";
-    this.shadowList = [];
+    this.syncedShadow = this.content;
+
     this.clients = [];
-
-    this.updateShadow();
-
     this.editQueue = [];
 
-    this.syncFrequency = 250;
-    this.syncInterval = setInterval(this.sync.bind(this), this.syncFrequency);
+    this.throttleFrequency = 100;
+    this.throttled = 0;
+    // this.syncInterval = setInterval(this.sync.bind(this), this.syncFrequency);
 }
 
 // Enqueue patch to be processed at a later date
 Document.prototype.patch = function patch(diffText, client) {
     // TODO: Verify diff format?
-    console.log("Received patches");
     var patches = dmp.patch_fromText(diffText);
+
+    // Patch client shadow that generated the changes
     client.shadow = dmp.patch_apply(patches, client.shadow)[0];
+
+    // Enqueu patches for other clients
     this.editQueue.push(patches);
 };
+
+Document.prototype.throttledSync = (function throttledSync() {
+    if (this.throttled) return throttled;
+    this.throttled = throttle(this.sync.bind(this), this.throttleFrequency);
+})();
 
 // Applies edits, creates diff, and sends to clients
 Document.prototype.sync = function sync() {
     if (!this.editQueue || this.editQueue.length === 0) return;
-
-    console.log("Syncing", this.editQueue.length);
 
     // Fast clone edit queue array in case applying edits takes a while
     var eq = this.editQueue.slice(0);
@@ -44,27 +50,38 @@ Document.prototype.sync = function sync() {
     for (var i = 0; i < eq.length; i++) {
         // Apply edits
         this.content = dmp.patch_apply(eq[i], this.content)[0];
-        // this.patchShadow(eq[i]);
     }
 
-    // Edits complete, do diff against shadow
-    // Send changes to all clients
+    // Edits complete, do diff and patch against shadows
     this.patchClients();
 
     // Update the shadow to match content
-    this.updateShadow();
+    this.updateShadows();
 };
 
 // Sends new patches to all clients
 Document.prototype.patchClients = function patchClients() {
     console.log("Patching ", this.clients.length, "clients");
+
+    var standardPatches = dmp.patch_make(this.syncedShadow, this.content);
+
     for (var i = 0; i < this.clients.length; i++) {
-        var patches = dmp.patch_make(this.clients[i].shadow, this.content);
-        this.clients[i].patchClient(patches);
+        var c = this.clients[i];
+        // Use common patches if client shadow matches the synced shadow
+        if (c.shadow.length === this.syncedShadow.length) {
+            if (c.shadow === this.syncedShadow) {
+                c.patchClient(standardPatches);
+                return;
+            }
+        }
+        // Generate patch for this client only
+        var patches = dmp.patch_make(c.shadow, this.content);
+        c.patchClient(patches);
     }
 };
 
-Document.prototype.updateShadow = function updateShadow() {
+Document.prototype.updateShadows = function updateShadows() {
+    this.syncedShadow = this.content;
     for (var i = 0; i < this.clients.length; i++) {
         this.clients[i].shadow = this.content;
     }
@@ -84,6 +101,8 @@ Document.prototype.set = function set(newContent) {
 
 Document.prototype.close = function close(callback) {
     // TODO: Save and close the document
+    // Clean up
+    if (this.throttled && this.throttled.cancel) this.throttle.cancel();
 };
 
 // Generates a new client and returns it

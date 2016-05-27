@@ -10,7 +10,7 @@ module.exports = (function() {
 
     // Returns true if the document is presently open
     var isOpen = function isOpen(id) {
-        return (documentMap.hasOwnProperty(id));
+        return (documentMap[id] != undefined);
     };
 
     // Returns a document from cache or creates a new one
