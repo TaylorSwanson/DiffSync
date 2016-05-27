@@ -15,7 +15,7 @@ function Client(doc) {
 
     // List of patches that need to be sent to client
     this.patchQueue = [];
-    
+
     // Time to wait before sending patch messages to client
     this.throttleFrequency = 500;
     // Start throttled sync interval
@@ -30,10 +30,12 @@ Client.prototype.__proto__ = events.EventEmitter.prototype;
 // This client is disconnecting
 Client.prototype.disconnect = function disconnect() {
     this.doc.removeClient(this);
-    this.doc = undefined;
-    this.patchQueue = [];
+    this.doc = null;
+    this.patchQueue = null;
+    this.shadow = null;
 
-    clearInterval(this.patchInterval);
+    if (this.throttled && this.throttled.cancel) this.throttled.cancel();
+    this.throttled = null;
 };
 
 // Applies server-side edits to be sent to the client
