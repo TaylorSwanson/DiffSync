@@ -107,7 +107,7 @@ Document.prototype.setSaveHandler = function setSaveHandler(saveFunction, freque
     this.saveFunction = saveFunction;
 
     // Start saving every freq. ms
-    this.saveInterval = setInterval(this.save().bind(this), frequency);
+    this.saveInterval = setInterval(this.save.bind(this), frequency);
 };
 
 Document.prototype.setCloseHandler = function setCloseHandler(closeFunction) {
@@ -152,7 +152,10 @@ Document.prototype.removeClient = function removeClient(client) {
     var index = this.clients.indexOf(client);
     if (index !== -1) this.clients.splice(index, 1);
 
-    // TODO: Check number of clients, remove if nobody's here
+    // Check number of clients, remove if nobody's here
+    if (!this.clients || this.clients.length === 0) {
+        this.close();
+    }
 };
 
 Document.prototype.getContent = function getContent() {

@@ -20,20 +20,22 @@
                     switch(message.type) {
                         case "content":
                             if (!client) {
-                                client = new DiffSync.ClientSession(message.content);
-                                console.log("Created client session");
-
-                                client.on("patch", function(patches) {
-                                    ws.send(JSON.stringify({
-                                        type: "patch",
-                                        patches: patches
-                                    }));
-                                });
-
-                                document.getElementById("editable").value = client.getContent();
-
-                                break;
+                                console.log("Creating new client session");
+                            } else {
+                                console.log("Client/server went out of sync; reloading document");
                             }
+
+                            client = new DiffSync.ClientSession(message.content);
+
+                            client.on("patch", function(patches, checksum) {
+                                ws.send(JSON.stringify({
+                                    type: "patch",
+                                    patches: patches,
+                                    checksum: checksum
+                                }));
+                            });
+
+                            document.getElementById("editable").value = client.getContent();
 
                             break;
                         case "patch":

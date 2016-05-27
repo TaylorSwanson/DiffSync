@@ -72,7 +72,14 @@ Client.prototype.sync = function sync() {
 };
 
 // Applies the client's edit to the doc
-Client.prototype.patchServer = function patchServer(patches) {
+Client.prototype.patchServer = function patchServer(patches, checksum) {
+    if (!checksum) return console.error("Client must provide checksum with patch");
+
+    if (checksum != this.shadow.checksum) {
+        // Checksums don't match; resync server content
+        return this.emit("resync");
+    }
+
     this.doc.patch(patches, this);
 };
 

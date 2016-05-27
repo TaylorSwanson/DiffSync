@@ -39,7 +39,7 @@ module.exports = (function() {
 
             // Apply event handlers
             d.setSaveHandler(function saveHandler(data) {
-                dataProvider.save(id, data)
+                dataProvider.set(id, data)
             }, saveFrequency);
 
             d.setCloseHandler(function() {

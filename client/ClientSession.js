@@ -53,7 +53,7 @@ ClientSession.prototype.sync = throttle(function sync() {
     var diffText = dmp.patch_toText(this.patchQueue);
     if (!diffText) return;
 
-    this.emit("patch", diffText);
+    this.emit("patch", diffText, this.shadow.checksum);
     this.patchQueue = [];
 }, patchFrequency);
 

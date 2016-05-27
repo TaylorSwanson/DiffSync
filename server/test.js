@@ -1,7 +1,7 @@
 var WebSocketServer = require("ws").Server;
 var wss = new WebSocketServer({ port: 5667 });
 
-var LibOT = require("./index.js");
+var DiffSync = require("./index.js");
 
 // Define a dataProvider instance
 function dataProvider() { }
@@ -10,19 +10,29 @@ dataProvider.prototype.get = function get(id, callback) {
     callback("Default document with id: " + id);
 };
 
-var ot = new LibOT(new dataProvider());
+dataProvider.prototype.set = function set(id, content) {
+
+};
+
+var ot = new DiffSync(new dataProvider());
+
+
 
 wss.on("connection", function connection(ws) {
     console.log("New client; creating session");
+
+    var resync = function resync() {
+        ws.send(JSON.stringify({
+            type: "content",
+            patches: client.getContent()
+        }));
+    };
 
     var client;
 
     ot.getClient("123", function(err, newClient) {
         client = newClient;
-        ws.send(JSON.stringify({
-            type: "content",
-            content: client.getContent()
-        }));
+        resync(ws);
     });
 
     // Server updating client with patches
@@ -32,6 +42,12 @@ wss.on("connection", function connection(ws) {
             type: "patch",
             patches: patches
         }));
+    });
+
+    // Client and server are out of sync
+    client.on("resync", function() {
+        if (!ws) return;
+        resync(ws);
     });
 
     ws.on("message", function handleMessage(message) {
@@ -49,7 +65,7 @@ wss.on("connection", function connection(ws) {
                 break;
             // Client made changes
             case "patch":
-                client.patchServer(message.patches);
+                client.patchServer(message.patches, message.checksum);
                 break;
             default:
                 console.error("Received unrecognized message:", message);

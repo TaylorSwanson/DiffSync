@@ -5,12 +5,12 @@
 
 var documentManager = require("./modules/DocumentManager.js");
 
-function LibOT(dataProvider) {
+function DiffSync(dataProvider) {
     this.dataProvider = dataProvider;
 };
 
 // Get a client instance attached to the specified document
-LibOT.prototype.getClient = function getClient(id, callback) {
+DiffSync.prototype.getClient = function getClient(id, callback) {
     if (documentManager.isOpen(id)) {
         return callback(null, documentManager.get(id).getClient());
     }
@@ -19,4 +19,4 @@ LibOT.prototype.getClient = function getClient(id, callback) {
     });
 };
 
-module.exports = LibOT;
+module.exports = DiffSync;
