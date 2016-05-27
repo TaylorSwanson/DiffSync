@@ -67,11 +67,10 @@ Document.prototype.patchClients = function patchClients() {
     for (var i = 0; i < this.clients.length; i++) {
         var c = this.clients[i];
         // Use common patches if client shadow matches the synced shadow
-        if (c.shadow.length === this.syncedShadow.length) {
-            if (c.shadow === this.syncedShadow) {
-                c.patchClient(standardPatches);
-                return;
-            }
+        if (c.shadow == this.syncedShadow) {
+
+            c.patchClient(standardPatches);
+            return;
         }
         // Generate patch for this client only
         var patches = dmp.patch_make(c.shadow, this.content);
@@ -82,7 +81,7 @@ Document.prototype.patchClients = function patchClients() {
 Document.prototype.updateShadows = function updateShadows() {
     this.syncedShadow = this.content;
     for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].shadow = this.content;
+        this.clients[i].shadow = this.syncedShadow;
     }
 };
 
