@@ -2,8 +2,8 @@
 <html>
     <head>
         <title>Realtime collaboration test</title>
-        <script src="./client/OTClient.js" type="application/javascript"/>
-        <script>
+        <script src="OTClient.js" type="text/javascript"/>
+        <script type="text/javascript">
             document.addEventListener("DOMContentLoaded", function(event) {
                 var host = window.document.location.host.replace(/:.*/, '');
                 var ws = new WebSocket("ws://" + host + ":5667");
@@ -34,7 +34,10 @@
                             break;
                         case "patch":
                             if (!client) break;
-                            client.patchClient(message.patches)
+                            client.patchClient(message.patches);
+
+                            document.getElementById("editable").value = client.getContent();
+
                             break;
                         default:
                             console.error("Unrecognized message");
@@ -42,11 +45,16 @@
                     }
                 };
 
+                function updateField() {
+                    if (!client) return;
+                    client.edit(document.getElementById("editable").value);
+                }
+
             });
         </script>
     </head>
     <body>
-        <textarea id="editable">
+        <textarea id="editable" onChange="updateField" onkeyup="updateField">
 
         </textarea>
     </body>

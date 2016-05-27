@@ -19,19 +19,19 @@ wss.on("connection", function connection(ws) {
 
     ot.getClient("123", function(err, newClient) {
         client = newClient;
-        ws.send({
+        ws.send(JSON.stringify({
             type: "content",
             content: client.getContent()
-        });
+        }));
     });
 
     // Server updating client with patches
     client.on("patch", function(patches) {
         if (!ws) return;
-        ws.send({
+        ws.send(JSON.stringify({
             type: "patch",
             patches: patches
-        });
+        }));
     });
 
     ws.on("message", function handleMessage(message) {
