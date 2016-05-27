@@ -96,13 +96,14 @@ Document.prototype.set = function set(newContent) {
 };
 
 Document.prototype.save = function save() {
+    console.log("Saving");
     if (!this.saveFunction) throw new Error("Cannot save document without providing a save handler first");
     this.sync();
     this.saveFunction(this.content);
 };
 
 Document.prototype.setSaveHandler = function setSaveHandler(saveFunction, frequency) {
-    if (this.saveInterval && typeof == "intervalObject") clearInterval(this.saveInterval);
+    if (this.saveInterval) clearInterval(this.saveInterval);
     this.saveFunction = saveFunction;
 
     // Start saving every freq. ms
@@ -114,8 +115,11 @@ Document.prototype.setCloseHandler = function setCloseHandler(closeFunction) {
 };
 
 Document.prototype.close = function close(callback) {
+    console.log("Closing");
     // Save the document
     this.save();
+    this.closeFunction();
+
     // Clean up
     this.content = null;
     this.syncedShadow = null;
@@ -126,7 +130,7 @@ Document.prototype.close = function close(callback) {
     this.closeFunction = null;
 
     this.saveFunction = 0;
-    this.saveInterval = null;
+    if (this.saveInterval) clearInterval(this.saveInterval);
 
     if (this.throttled && this.throttled.cancel) this.throttle.cancel();
     this.throttleFrequency = null;
