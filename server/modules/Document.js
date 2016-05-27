@@ -23,10 +23,11 @@ function Document(originalContent) {
 }
 
 // Enqueue patch to be processed at a later date
-Document.prototype.patch = function patch(diffText) {
+Document.prototype.patch = function patch(diffText, client) {
     // TODO: Verify diff format?
     console.log("Received patches");
     var patches = dmp.patch_fromText(diffText);
+    client.shadow = dmp.patch_apply(patches, client.shadow)[0];
     this.editQueue.push(patches);
 };
 
@@ -43,7 +44,7 @@ Document.prototype.sync = function sync() {
     for (var i = 0; i < eq.length; i++) {
         // Apply edits
         this.content = dmp.patch_apply(eq[i], this.content)[0];
-        this.patchShadow(eq[i]);
+        // this.patchShadow(eq[i]);
     }
 
     // Edits complete, do diff against shadow
@@ -69,12 +70,12 @@ Document.prototype.updateShadow = function updateShadow() {
     }
 };
 
-// Applies patches to every shadow
-Document.prototype.patchShadow = function patchShadow(patches) {
-    for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].shadow = dmp.patch_apply(patches, this.clients[i].shadow)[0];
-    }
-};
+// // Applies patches to every shadow
+// Document.prototype.patchShadow = function patchShadow(patches) {
+//     for (var i = 0; i < this.clients.length; i++) {
+//         this.clients[i].shadow = dmp.patch_apply(patches, this.clients[i].shadow)[0];
+//     }
+// };
 
 Document.prototype.set = function set(newContent) {
     this.content = newContent;
@@ -88,6 +89,8 @@ Document.prototype.close = function close(callback) {
 // Generates a new client and returns it
 Document.prototype.getClient = function getClient() {
     var c = new Client(this);
+    c.shadow = this.content;
+
     this.clients.push(c);
 
     return c;

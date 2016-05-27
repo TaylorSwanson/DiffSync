@@ -51,14 +51,15 @@ Client.prototype.sendPatches = function sendPatches() {
     if (!this.patchQueue || this.patchQueue.length === 0) return;
 
     var diffText = dmp.patch_toText(this.patchQueue);
-
+    if (!diffText) return;
+    
     this.emit("patch", diffText);
     this.patchQueue = [];
 };
 
 // Applies the client's edit to the doc
 Client.prototype.patchServer = function patchServer(patches) {
-    this.doc.patch(patches);
+    this.doc.patch(patches, this);
 };
 
 // Gets the Document's content
