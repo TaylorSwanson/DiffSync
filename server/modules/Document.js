@@ -16,7 +16,7 @@ function Document(originalContent) {
     this.editQueue = [];
 
     this.throttleFrequency = 100;
-    this.throttled = 0;
+    this.throttled = throttle(this.sync.bind(this), this.throttleFrequency);
 }
 
 // Enqueue patch to be processed at a later date
@@ -34,8 +34,8 @@ Document.prototype.patch = function patch(diffText, client) {
 };
 
 Document.prototype.throttledSync = (function throttledSync() {
-    if (this.throttled) return throttled;
-    this.throttled = throttle(this.sync.bind(this), this.throttleFrequency);
+    if (this.throttled) return this.throttled;
+    throw new Error("Throttled sync function has already been disposed of");
 })();
 
 // Applies edits, creates diff, and sends to clients

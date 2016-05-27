@@ -15,11 +15,11 @@ function Client(doc) {
 
     // List of patches that need to be sent to client
     this.patchQueue = [];
+    
     // Time to wait before sending patch messages to client
-    this.patchFrequency = 500;
-
-    // Start patch check interval
-    this.patchInterval = setInterval(this.sendPatches.bind(this), this.patchFrequency);
+    this.throttleFrequency = 500;
+    // Start throttled sync interval
+    this.throttled = throttle(this.sync.bind(this), this.throttleFrequency);
 
     // Apply EventEmitter properties to this
     events.EventEmitter.call(this);
@@ -46,8 +46,13 @@ Client.prototype.recallPatches = function recallPatches() {
     this.patchQueue = [];
 }
 
+Client.prototype.throttledSync = (function throttledSync() {
+    if (this.throttled) return this.throttled;
+    throw new Error("Throttled sync function has already been disposed of");
+})();
+
 // Sends patches to client
-Client.prototype.sendPatches = function sendPatches() {
+Client.prototype.sync = function sync() {
     // Ignore empty
     if (!this.patchQueue || this.patchQueue.length === 0) return;
 
