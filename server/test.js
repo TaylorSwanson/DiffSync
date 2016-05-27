@@ -15,7 +15,15 @@ var ot = new LibOT(new dataProvider());
 wss.on("connection", function connection(ws) {
     console.log("New client; creating session");
 
-    var client = ot.getClient("123");
+    var client;
+
+    ot.getClient("123", function(err, newClient) {
+        client = newClient;
+        ws.send({
+            type: "content",
+            content: client.getContent()
+        });
+    });
 
     // Server updating client with patches
     client.on("patch", function(patches) {
@@ -38,7 +46,7 @@ wss.on("connection", function connection(ws) {
                 break;
             // Client made changes
             case "patch":
-                client.patch(message.patches);
+                client.patchServer(message.patches);
                 break;
             default:
                 console.error("Received unrecognized message:", message);

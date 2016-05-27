@@ -35,7 +35,7 @@ Client.prototype.disconnect = function disconnect() {
 };
 
 // Applies server-side edits to be sent to the client
-Client.prototype.patch = function patch(patches) {
+Client.prototype.patchClient = function patchClient(patches) {
     this.patchQueue.push(patches);
 };
 
@@ -49,15 +49,20 @@ Client.prototype.sendPatches = function sendPatches() {
     // Ignore empty
     if (!this.patchQueue || this.patchQueue.length === 0) return;
 
-    this.emit("patch", this.patchQueue);
+    var diffText = dmp.patch_toText(this.patchQueue);
+
+    this.emit("patch", diffText);
     this.patchQueue = [];
 };
 
 // Applies the client's edit to the doc
-Client.prototype.edit = function edit(diff) {
-    // Calculate patches from diff text
-    var patches = dmp.patch_fromText(diff);
+Client.prototype.patchServer = function patchServer(patches) {
     this.doc.patch(patches);
+};
+
+// Gets the Document's content
+Client.prototype.getContent = function getContent() {
+    return (this.doc ? this.doc.getContent() : "");
 };
 
 module.exports = Client;

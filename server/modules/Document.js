@@ -45,7 +45,7 @@ Document.prototype.sync = function sync() {
 // Sends new patches to all clients
 Document.prototype.patchClients = function patchClients(patches) {
     for (var i = 0; i < this.clients.length; i++) {
-        this.clients[i].patch(patches);
+        this.clients[i].patchClient(patches);
     }
 };
 
@@ -76,6 +76,10 @@ Document.prototype.removeClient = function removeClient(client) {
     if (index !== -1) this.clients.splice(index, 1);
 
     // TODO: Check number of clients, remove if nobody's here
+};
+
+Document.prototype.getContent = function getContent() {
+    return this.content;
 };
 
 module.exports = Document;

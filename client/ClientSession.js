@@ -41,6 +41,13 @@ ClientSession.prototype.updateShadow = function updateShadow() {
     this.shadow = this.content;
 };
 
+ClientSession.prototype.getContent = function getContent() {
+    return this.content;
+};
+ClientSession.prototype.setContent = function setContent(newContent) {
+    this.content = newContent;
+};
+
 ClientSession.prototype.edit = function edit(newContent) {
     this.content = newContent;
     // Generate patches
@@ -52,10 +59,10 @@ ClientSession.prototype.edit = function edit(newContent) {
 };
 
 // Applies the server's changes to the client document
-ClientSession.patch = function patch(diffText) {
+ClientSession.prototype.patchClient = function patchClient(diffText) {
     // Extract patches from text
     var patches = dmp.patch_fromText(diffText);
-    // Apply
+    // Apply patches
     // NOTE: Shadow and content may not be the same now
     this.shadow = dmp.patch_apply(patches, this.shadow)[0];
     this.content = dmp.patch_apply(patches, this.content)[0];
@@ -63,6 +70,8 @@ ClientSession.patch = function patch(diffText) {
 
 // Throttled function that sends edits to server
 ClientSession.prototype.sync = throttle(function sync() {
-    this.emit("patch", this.patchQueue);
+    var diffText = dmp.patch_toText(this.patchQueue);
+
+    this.emit("patch", diffText);
     this.patchQueue = [];
 }, patchFrequency);

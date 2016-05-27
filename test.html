@@ -4,10 +4,42 @@
         <title>Realtime collaboration test</title>
         <script src="./client/OTClient.js" type="application/javascript"/>
         <script>
-            
+            document.addEventListener("DOMContentLoaded", function(event) {
+                var host = window.document.location.host.replace(/:.*/, '');
+                var ws = new WebSocket("ws://" + host + ":5667");
+
+                var client;
+
+                ws.onMessage = function(event) {
+                    console.log("Received message:", event);
+
+                    var message = JSON.parse(event.data);
+
+                    switch(message.type) {
+                        case "content":
+                            if (!client) {
+                                client = new ClientSession(message.content);
+
+                                client.on("patch", function(patches) {
+
+                                })
+                                break;
+                            }
+                            client.setContent(message.content);
+                            break;
+                        case "patch":
+                            if (!client) break;
+                            client.patch(message.diff)
+                            break;
+                    }
+                };
+
+            });
         </script>
     </head>
     <body>
+        <textarea id="editable">
 
+        </textarea>
     </body>
 </html>
