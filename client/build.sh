@@ -1,11 +1,7 @@
 #!/bin/bash
-touch ./OTClient.js
-echo "" > ./OTClient.js
 
-# cat ./diff_match_patch.js       >> ./OTClient.js
-# cat ./throttle.js               >> ./OTClient.js
-# cat ./EventEmitter.js           >> ./OTClient.js
-# cat ./Shadow.js                 >> ./OTClient.js
-# cat ./ClientSession.js          >> ./OTClient.js
+browserify ClientSession.js --s DiffSync -o ./DiffSync.js
 
-echo "Done"
+uglifyjs ./DiffSync.js -o ./DiffSyncMin.js
+
+echo "Done -- created DiffSync.js file"

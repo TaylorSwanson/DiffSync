@@ -1,3 +1,6 @@
+
+var md5 = require("./md5.js");
+
 function Shadow(defaultContent) {
     this.content = defaultContent || "";
     this.checksum = md5(this.content);
