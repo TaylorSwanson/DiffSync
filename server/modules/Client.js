@@ -46,6 +46,7 @@ Client.prototype.disconnect = function disconnect() {
 // Applies server-side edits to be sent to the client
 Client.prototype.patchClient = function patchClient(patches) {
     this.patchQueue.push(patches);
+    this.throttledSync();
 };
 
 // Clear patchQueue
@@ -64,7 +65,6 @@ Client.prototype.sync = function sync() {
     if (!this.patchQueue || this.patchQueue.length === 0) return;
 
     var diffText = dmp.patch_toText(this.patchQueue);
-    if (!diffText) return;
 
     this.emit("patch", diffText);
     this.patchQueue = [];

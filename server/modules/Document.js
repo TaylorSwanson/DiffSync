@@ -69,13 +69,13 @@ Document.prototype.patchClients = function patchClients() {
         var c = this.clients[i];
         // Use common patches if client shadow matches the synced shadow
         if (c.shadow.content == this.syncedShadow.content) {
-
+            console.log("Client", i, "didn't make changes; will receive standard patches");
             c.patchClient(standardPatches);
             return;
         }
         // Generate patch for this client only
         var patches = dmp.patch_make(c.shadow.content, this.content);
-        c.patchClient(patches);
+        if (patches.length > 0) c.patchClient(patches);
     }
 };
 
