@@ -24,7 +24,7 @@ wss.on("connection", function connection(ws) {
     var resync = function resync() {
         ws.send(JSON.stringify({
             type: "content",
-            patches: client.getContent()
+            content: client.getContent()
         }));
     };
 

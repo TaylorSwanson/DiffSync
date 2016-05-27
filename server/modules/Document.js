@@ -25,12 +25,18 @@ function Document(originalContent) {
 }
 
 // Enqueue patch to be processed at a later date
-Document.prototype.patch = function patch(diffText, client) {
+Document.prototype.patch = function patch(diffText, client, checksum) {
     // TODO: Verify diff format?
     var patches = dmp.patch_fromText(diffText);
 
     // Patch client shadow that generated the changes
     client.shadow.setContent(dmp.patch_apply(patches, client.shadow.content)[0]);
+
+    if (checksum != client.shadow.checksum) {
+        console.log(checksum, "!==", client.shadow.checksum);
+        // Checksums don't match; resync server content
+        return client.resync();
+    }
 
     // Enqueu patches for other clients
     this.editQueue.push(patches);
@@ -132,7 +138,7 @@ Document.prototype.close = function close(callback) {
     this.saveFunction = 0;
     if (this.saveInterval) clearInterval(this.saveInterval);
 
-    if (this.throttled && this.throttled.cancel) this.throttle.cancel();
+    if (this.throttled && this.throttled.cancel) this.throttled.cancel();
     this.throttleFrequency = null;
     this.throttled = null;
 };

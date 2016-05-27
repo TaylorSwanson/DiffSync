@@ -50,11 +50,6 @@ Client.prototype.patchClient = function patchClient(patches) {
     this.throttledSync();
 };
 
-// Clear patchQueue
-Client.prototype.recallPatches = function recallPatches() {
-    this.patchQueue = [];
-}
-
 Client.prototype.throttledSync = function throttledSync() {
     if (this.throttled) return this.throttled();
     throw new Error("Throttled sync function has already been disposed of");
@@ -75,13 +70,12 @@ Client.prototype.sync = function sync() {
 Client.prototype.patchServer = function patchServer(patches, checksum) {
     if (!checksum) return console.error("Client must provide checksum with patch");
 
-    if (checksum != this.shadow.checksum) {
-        // Checksums don't match; resync server content
-        return this.emit("resync");
-    }
-
-    this.doc.patch(patches, this);
+    this.doc.patch(patches, this, checksum);
 };
+
+Client.prototype.resync = function resync() {
+    this.emit("resync");
+}
 
 // Gets the Document's content
 Client.prototype.getContent = function getContent() {

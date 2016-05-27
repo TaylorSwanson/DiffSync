@@ -44,6 +44,7 @@ ClientSession.prototype.patchClient = function patchClient(diffText) {
     // NOTE: Shadow and content may not be the same now
     this.content = dmp.patch_apply(patches, this.content)[0];
     this.shadow.setContent(dmp.patch_apply(patches, this.shadow.content)[0]);
+    //this.syncChecksum = this.shadow.checksum;
 };
 
 // Throttled function that sends edits to server
