@@ -11,48 +11,69 @@ var Client = require("./Client.js");
 
 function Document(originalContent) {
     this.content = originalContent || "";
-    this.shadow = this.content;
+    this.shadowList = [];
     this.clients = [];
 
+    this.updateShadow();
+
     this.editQueue = [];
+
+    this.syncFrequency = 250;
+    this.syncInterval = setInterval(this.sync.bind(this), this.syncFrequency);
 }
 
 // Enqueue patch to be processed at a later date
 Document.prototype.patch = function patch(diffText) {
     // TODO: Verify diff format?
+    console.log("Received patches");
     var patches = dmp.patch_fromText(diffText);
     this.editQueue.push(patches);
 };
 
 // Applies edits, creates diff, and sends to clients
 Document.prototype.sync = function sync() {
+    if (!this.editQueue || this.editQueue.length === 0) return;
+
+    console.log("Syncing", this.editQueue.length);
+
     // Fast clone edit queue array in case applying edits takes a while
     var eq = this.editQueue.slice(0);
     this.editQueue = [];
     // Iterate over edit queue, apply patches
     for (var i = 0; i < eq.length; i++) {
-        // Apply edit
+        // Apply edits
         this.content = dmp.patch_apply(eq[i], this.content)[0];
+        this.patchShadow(eq[i]);
     }
 
     // Edits complete, do diff against shadow
-    var shadowPatches = dmp.patch_make(this.shadow, this.content);
+    // Send changes to all clients
+    this.patchClients();
+
     // Update the shadow to match content
     this.updateShadow();
-
-    // Send changes to all clients
-    this.patchClients(shadowPatches);
 };
 
 // Sends new patches to all clients
-Document.prototype.patchClients = function patchClients(patches) {
+Document.prototype.patchClients = function patchClients() {
+    console.log("Patching ", this.clients.length, "clients");
     for (var i = 0; i < this.clients.length; i++) {
+        var patches = dmp.patch_make(this.clients[i].shadow, this.content);
         this.clients[i].patchClient(patches);
     }
 };
 
 Document.prototype.updateShadow = function updateShadow() {
-    this.shadow = this.content;
+    for (var i = 0; i < this.clients.length; i++) {
+        this.clients[i].shadow = this.content;
+    }
+};
+
+// Applies patches to every shadow
+Document.prototype.patchShadow = function patchShadow(patches) {
+    for (var i = 0; i < this.clients.length; i++) {
+        this.clients[i].shadow = dmp.patch_apply(patches, this.clients[i].shadow)[0];
+    }
 };
 
 Document.prototype.set = function set(newContent) {

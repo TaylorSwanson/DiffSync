@@ -140,15 +140,12 @@ ClientSession.prototype.updateShadow = function updateShadow() {
 ClientSession.prototype.getContent = function getContent() {
     return this.content;
 };
-ClientSession.prototype.setContent = function setContent(newContent) {
-    this.content = newContent;
-};
 
 ClientSession.prototype.edit = function edit(newContent) {
     this.content = newContent;
     // Generate patches
     var patches = dmp.patch_make(this.shadow, this.content)[0];
-    this.patchQueue.concat(patches);
+    this.patchQueue.push(patches);
     // Prepare for more edits/sync with server
     this.updateShadow();
     this.sync();

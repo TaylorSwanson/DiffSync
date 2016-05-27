@@ -13,15 +13,16 @@
 
                 var client;
 
-                ws.onMessage = function(event) {
-                    console.log("Received message:", event);
-
+                ws.onmessage = function(event) {
                     var message = JSON.parse(event.data);
+
+                    console.log("Received message:", message);
 
                     switch(message.type) {
                         case "content":
                             if (!client) {
                                 client = new ClientSession(message.content);
+                                console.log("Created client session");
 
                                 client.on("patch", function(patches) {
                                     ws.send(JSON.stringify({
@@ -30,10 +31,11 @@
                                     }));
                                 });
 
+                                document.getElementById("editable").value = client.getContent();
+
                                 break;
                             }
 
-                            client.setContent(message.content);
                             break;
                         case "patch":
                             if (!client) break;
@@ -48,17 +50,17 @@
                     }
                 };
 
-                function updateField() {
+                document.getElementById("editable").onkeyup = function updateField() {
                     if (!client) return;
                     client.edit(document.getElementById("editable").value);
                 }
 
-            };
+            }.bind(window);
 
         </script>
     </head>
     <body>
-        <textarea id="editable" onChange="window.updateField" onkeyup="window.updateField">
+        <textarea id="editable">
 
         </textarea>
     </body>

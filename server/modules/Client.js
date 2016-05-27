@@ -10,6 +10,7 @@ var dmp = require("./DiffMatchPatch.js");
 function Client(doc) {
     if (!doc) return new Error("Document must be provided when creating a client");
     this.doc = doc;
+    this.shadow = "";
 
     // List of patches that need to be sent to client
     this.patchQueue = [];
@@ -17,7 +18,7 @@ function Client(doc) {
     this.patchFrequency = 500;
 
     // Start patch check interval
-    this.patchInterval = setInterval(this.sendPatches, this.patchFrequency);
+    this.patchInterval = setInterval(this.sendPatches.bind(this), this.patchFrequency);
 
     // Apply EventEmitter properties to this
     events.EventEmitter.call(this);

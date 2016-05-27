@@ -35,6 +35,9 @@ wss.on("connection", function connection(ws) {
     });
 
     ws.on("message", function handleMessage(message) {
+
+        message = JSON.parse(message);
+
         console.log("Received:", message);
 
         switch(message.type) {
